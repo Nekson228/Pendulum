@@ -1,0 +1,13 @@
+{
+  "rk4": "data/Methods/RungeKutta4.txt",
+  "euler": "data/Methods/Euler.txt",
+  "heun": "data/Methods/Heun.txt",
+  "midpoint": "data/Methods/Midpoint.txt",
+  "ralston2": "data/Methods/Ralstons2.txt",
+  "ralston3": "data/Methods/Ralstons3.txt",
+  "ralston4": "data/Methods/Ralstons4.txt",
+  "3/8": "data/Methods/ThreeEights.txt",
+  "fehlberg": "data/Methods/Fehlberg.txt",
+  "dp5": "data/Methods/DormandPrince5.txt",
+  "dp8": "data/Methods/DormandPrince8.txt"
+}

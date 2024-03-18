@@ -28,7 +28,7 @@ class Table:
     def get_rk_row(self, i: int) -> np.ndarray:
         if i > self._s:
             raise ValueError(f"Row {i} is out of bounds for this table")
-        elif i < 2:
+        elif i < 1:
             raise ValueError(f"Row {i} is not defined for this table")
         # start and end are calculated similarly to _parse_butcher but 2nd coefficient is at 0
         start = (i - 1) * (i - 2) // 2

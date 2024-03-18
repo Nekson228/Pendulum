@@ -1,0 +1,10 @@
+{
+  "method": "dp5",
+  "gravity": 9.80665,
+  "length": 1.0,
+  "time": 5.0,
+  "step": "1/1000",
+  "theta": 0.5,
+  "omega": 0.0,
+  "csv_path": "example/data.csv"
+}
