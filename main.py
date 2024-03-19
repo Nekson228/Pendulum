@@ -2,13 +2,31 @@ import argparse as ap
 from src.Simulation.Simulation import Simulation
 from src.RungeKuttaTable.Table import Table
 from src.Simulation.PendulumEquations import angular_velocity, angular_acceleration
+from visual.plot import plot
+from visual.animation import run_animation
 
 from functools import partial
 from fractions import Fraction
+from typing import Callable
 
 import numpy as np
 import json
 import csv
+
+
+def load_json(file_path):
+    with open(file_path) as file:
+        return json.load(file)
+
+
+def run_simulation(sim: Simulation, omega_dot: Callable[..., float], theta_dot: Callable[..., float], file_path: str):
+    print(f"Running simulation.")
+    with open(file_path, "w") as file:
+        writer = csv.writer(file)
+        writer.writerow(['t', 'theta', 'omega'])
+        for t, y in sim.run(omega_dot, theta_dot):
+            writer.writerow((t, *y))
+    print(f"Simulation finished. Data saved to {file_path}")
 
 
 def main(args: ap.Namespace):
@@ -23,18 +41,16 @@ def main(args: ap.Namespace):
     theta_dot = angular_velocity
 
     # running the simulation
-    with open("example/data.csv", "w") as file:
-        writer = csv.writer(file)
-        writer.writerow(['t', 'theta', 'omega'])
-        for t, y in sim.run(omega_dot, theta_dot):
-            writer.writerow((t, *y))
+    run_simulation(sim, omega_dot, theta_dot, args.file)
+
+    # running visualisation
+    run_animation(args)
+    plot(args)
 
 
 if __name__ == '__main__':
-    with open('data/name_to_path.json') as file:
-        name_to_path = json.load(file)
-    with open('data/constants.json') as file:
-        constants = json.load(file)
+    name_to_path = load_json('data/name_to_path.json')
+    constants = load_json('data/constants.json')
 
     parser = ap.ArgumentParser(
         description='Pendulum simulation',
@@ -44,7 +60,7 @@ if __name__ == '__main__':
     parser.add_argument('-f', '--file',
                         help="Path for output file (saved in csv format)",
                         type=str,
-                        default=constants["csv_path"])
+                        default=constants["data_path"])
     parser.add_argument('-m', '--method',
                         help='Runge-Kutta method name',
                         type=str,
@@ -75,5 +91,4 @@ if __name__ == '__main__':
                         help='Initial angular velocity in rad/s',
                         type=float,
                         default=constants['omega'])
-    args = parser.parse_args()
-    main(args)
+    main(parser.parse_args())
