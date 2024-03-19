@@ -4,6 +4,7 @@ import os
 from argparse import Namespace
 
 FIG_SIZE = (10, 7.5)
+SAVE_PATH = "plot.png"
 
 
 def load_data(file_path: str):
@@ -34,6 +35,11 @@ def show_args(fig, args: Namespace):
              fontsize=12, ha='center', va='center')
 
 
+def save_plot(fig):
+    fig.savefig(SAVE_PATH)
+    print(f"Plot saved to {SAVE_PATH}")
+
+
 def plot(args: Namespace):
     data = load_data(args.file)
     if data is None:
@@ -52,5 +58,8 @@ def plot(args: Namespace):
 
     for key, (ax, title, ylabel) in plots.items():
         plot_data(ax, data, "t", key, title, ylabel)
+
+    if args.save:
+        save_plot(fig)
 
     plt.show()

@@ -13,6 +13,9 @@ TITLE_FONT_SIZE = "xx-large"
 TIME_TEMPLATE = 'time = %.2fs'
 TIME_TEXT_POSITION = (.8, 0)
 TIME_TEXT_FONT_SIZE = 14
+SAVE_PATH = "pendulum.gif"
+SAVE_WRITER = "PillowWriter"
+INTERVAL_MS = 5
 
 
 def load_data(file_path: str):
@@ -24,6 +27,11 @@ def load_data(file_path: str):
     except pd.errors.ParserError:
         print(f"Error parsing the file {file_path}. Please check the file format.")
         return None
+
+
+def save_animation(ani: anim.FuncAnimation):
+    ani.save(SAVE_PATH, writer=SAVE_WRITER, fps=100)
+    print(f"Animation saved to {SAVE_PATH}")
 
 
 def setup_plot():
@@ -61,5 +69,9 @@ def run_animation(args: Namespace):
         return pendulum_line, pendulum_head, pendulum_origin, time_text
 
     ani = anim.FuncAnimation(fig, update,
-                             frames=np.arange(len(data["t"]), step=5), interval=5, blit=True, init_func=init)
+                             frames=np.arange(len(data["t"]), step=INTERVAL_MS), interval=INTERVAL_MS,
+                             blit=True, init_func=init)
+    if args.save:
+        save_animation(ani)
+
     plt.show()

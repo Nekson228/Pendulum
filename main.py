@@ -91,4 +91,8 @@ if __name__ == '__main__':
                         help='Initial angular velocity in rad/s',
                         type=float,
                         default=constants['omega'])
+    parser.add_argument('--save',
+                        help='Save plot to file',
+                        action='store_true')
+    # TODO: add save path argument
     main(parser.parse_args())
