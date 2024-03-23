@@ -6,5 +6,6 @@
   "step": "1/1000",
   "theta": 0.5,
   "omega": 0.0,
-  "data_path": "pendulum.csv"
+  "data_path": "pendulum.csv",
+  "math_data_path": "pendulum_math.csv"
 }

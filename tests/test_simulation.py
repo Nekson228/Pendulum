@@ -1,5 +1,5 @@
 from src.RungeKuttaTable.Table import Table
-from src.Simulation.Simulation import Simulation
+from src.Simulation.PhysSimulation import Simulation
 from src.Simulation.PendulumEquations import angular_velocity, angular_acceleration
 
 from functools import partial

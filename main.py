@@ -1,17 +1,20 @@
-import argparse as ap
-from src.Simulation.Simulation import Simulation
+from src.Simulation.PhysSimulation import Simulation
 from src.RungeKuttaTable.Table import Table
 from src.Simulation.PendulumEquations import angular_velocity, angular_acceleration
+from src.Simulation.MathSimualtion import MathSimulation
 from visual.plot import plot
 from visual.animation import run_animation
 
 from functools import partial
 from fractions import Fraction
 from typing import Callable
-
+import argparse as ap
 import numpy as np
 import json
 import csv
+
+CONSTANTS_PATH = 'data/constants.json'
+RK_TABLES_PATH = 'data/name_to_path.json'
 
 
 def load_json(file_path):
@@ -19,7 +22,8 @@ def load_json(file_path):
         return json.load(file)
 
 
-def run_simulation(sim: Simulation, omega_dot: Callable[..., float], theta_dot: Callable[..., float], file_path: str):
+def run_phys_simulation(sim: Simulation, omega_dot: Callable[..., float], theta_dot: Callable[..., float],
+                        file_path: str):
     print(f"Running simulation.")
     with open(file_path, "w") as file:
         writer = csv.writer(file)
@@ -27,6 +31,16 @@ def run_simulation(sim: Simulation, omega_dot: Callable[..., float], theta_dot: 
         for t, y in sim.run(omega_dot, theta_dot):
             writer.writerow((t, *y))
     print(f"Simulation finished. Data saved to {file_path}")
+
+
+def run_math_simulation(sim: MathSimulation, file_path: str):
+    print(f"Running math simulation.")
+    with open(file_path, "w") as file:
+        writer = csv.writer(file)
+        writer.writerow(['t', 'theta', 'omega'])
+        for t, theta, omega in sim.run():
+            writer.writerow((t, theta, omega))
+    print(f"Math simulation finished. Data saved to {file_path}")
 
 
 def main(args: ap.Namespace):
@@ -41,7 +55,12 @@ def main(args: ap.Namespace):
     theta_dot = angular_velocity
 
     # running the simulation
-    run_simulation(sim, omega_dot, theta_dot, args.file)
+    run_phys_simulation(sim, omega_dot, theta_dot, args.file)
+
+    # running math simulation
+    if args.math:
+        math_sim = MathSimulation(args.omega, args.theta, args.time, args.gravity, args.length, args.step)
+        run_math_simulation(math_sim, args.mfile)
 
     # running visualisation
     run_animation(args)
@@ -49,8 +68,8 @@ def main(args: ap.Namespace):
 
 
 if __name__ == '__main__':
-    name_to_path = load_json('data/name_to_path.json')
-    constants = load_json('data/constants.json')
+    name_to_path = load_json(RK_TABLES_PATH)
+    constants = load_json(CONSTANTS_PATH)
 
     parser = ap.ArgumentParser(
         description='Pendulum simulation',
@@ -94,5 +113,11 @@ if __name__ == '__main__':
     parser.add_argument('--save',
                         help='Save plot to file',
                         action='store_true')
-    # TODO: add save path argument
+    parser.add_argument('--math',
+                        help='Plot math pendulum',
+                        action='store_true')
+    parser.add_argument('--mfile',
+                        help='Path for math simulation output file (saved in csv format)',
+                        type=str,
+                        default=constants["math_data_path"])
     main(parser.parse_args())
